@@ -1,3 +1,39 @@
+
+import re as _re
+
+class Token(str):
+    """
+    A Token is a string with an offset into its source attached.
+    """
+
+    def __new__(cls, data, offset):
+        ret = super().__new__(cls, data)
+        ret.offset = offset
+        return ret
+
+    @classmethod
+    def split(cls, string):
+        """
+        split(string) -> list
+
+        Split the given string into Tokens, similarly to str.split().
+        """
+
+        parts = _re.split('(\s+)', string)
+        offset = 0
+        ret = []
+
+        for n, p in enumerate(parts):
+            if not n % 2:
+                ret.append(Token(p, offset))
+            offset += len(p)
+
+        # Leading and trailing empty tokens are removed.
+        if not ret[0]: del ret[0]
+        if ret and not ret[-1]: del ret[-1]
+
+        return ret
+
 class Command:
     """
     The Command class allows you to parse and read bot commands. This includes
@@ -18,7 +54,7 @@ class Command:
         Perform the parsing.
         """
 
-        parts = self.text.split()
+        parts = Token.split(self.text)
 
         if len(parts) == 0:
             return

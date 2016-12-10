@@ -126,8 +126,8 @@ class Room(executable.Executable):
                         if attempts == 0:
                             self.cleanup()
 
-                        time.sleep(5)
                         attempts += 1
+                        time.sleep(5 ** attempts)
 
                     self.join()
                     self.identify()
